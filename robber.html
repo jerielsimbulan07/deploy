@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ellailie's Museum ✨</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cute: {
+                            bg: '#fff5f8',          // Soft strawberry milk background
+                            card: '#ffffff',        // Crisp white card base
+                            pink: '#f472b6',        // Vibrant bubblegum pink
+                            pinkLight: '#fce7f3',   // Soft pastel pink
+                            pinkDark: '#db2777',    // Deep berry pink
+                            purple: '#c084fc',      // Dreamy lavender
+                            purpleLight: '#f3e8ff', // Very light pastel purple
+                            purpleDark: '#7e22ce',   // Deep violet
+                            accent: '#fb7185',      // Rose accent
+                            yellow: '#fef08a'       // Pastel star sparkle yellow
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['"Fredoka"', 'sans-serif'],
+                        script: ['"Dancing Script"', 'cursive'],
+                        sans: ['"Quicksand"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Cute Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fff5f8;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f472b6;
+            border-radius: 20px;
+            border: 2px solid #fff5f8;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #db2777;
+        }
+
+        /* Glassmorphism Panels */
+        .cute-glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid rgba(252, 231, 243, 0.9);
+            box-shadow: 0 10px 30px -10px rgba(244, 114, 182, 0.2);
+        }
+
+        .cute-nav {
+            background: rgba(255, 245, 248, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 2px solid rgba(244, 114, 182, 0.2);
+        }
+
+        /* Cute Polaroid Frame Styling */
+        .cute-card-frame {
+            background: #ffffff;
+            border: 3px solid #fce7f3;
+            box-shadow: 0 15px 35px -10px rgba(192, 132, 252, 0.25), 0 0 20px rgba(244, 114, 182, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .cute-card-frame:hover {
+            transform: translateY(-10px) rotate(-1deg) scale(1.02);
+            border-color: #f472b6;
+            box-shadow: 0 25px 45px -12px rgba(244, 114, 182, 0.4), 0 0 25px rgba(192, 132, 252, 0.3);
+        }
+
+        /* Heart Beat & Floating Animations */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        .animate-float {
+            animation: floatSlow 5s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.08); }
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes heartPopAnim {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+        .heart-pop {
+            animation: heartPopAnim 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Sparkle Tag Badge */
+        .cute-badge {
+            background: linear-gradient(135deg, #fce7f3 0%, #f3e8ff 100%);
+            border: 1.5px solid #f472b6;
+        }
+    </style>
+</head>
+<body class="bg-cute-bg text-gray-700 font-sans selection:bg-cute-pinkLight selection:text-cute-pinkDark overflow-x-hidden relative min-h-screen flex flex-col justify-between">
+
+    <!-- Interactive Canvas for Floating Hearts & Sparkles -->
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-80"></canvas>
+
+    <!-- Ambient Pastel Glow Orbs -->
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-gradient-to-b from-cute-pinkLight/60 via-cute-purpleLight/40 to-transparent pointer-events-none z-0 blur-3xl"></div>
+    <div class="fixed top-1/4 -left-20 w-96 h-96 bg-cute-pink/20 rounded-full blur-[100px] pointer-events-none z-0 animate-pulse-glow"></div>
+    <div class="fixed bottom-10 -right-20 w-[500px] h-[500px] bg-cute-purple/20 rounded-full blur-[120px] pointer-events-none z-0 animate-pulse-glow" style="animation-delay: 2s;"></div>
+
+    <!-- Background Audio Element -->
+    <audio id="museum-audio" src="The 1975 - Robbers (Official Video) (Explicit).mp3" loop></audio>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 cute-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Title -->
+            <a href="#" class="group flex items-center gap-2">
+                <span class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-cute-pink to-cute-purple flex items-center justify-center text-white text-lg shadow-md group-hover:rotate-12 transition-transform">
+                    <i class="fa-solid fa-heart"></i>
+                </span>
+                <div>
+                    <span class="font-fredoka text-xl sm:text-2xl font-bold tracking-wide bg-gradient-to-r from-cute-pinkDark to-cute-purpleDark bg-clip-text text-transparent block">
+                        Ellailie's museum
+                    </span>
+                    <span class="text-[10px] uppercase tracking-[0.2em] text-cute-pink font-fredoka font-semibold block -mt-1">
+                        hehehehe ✨
+                    </span>
+                </div>
+            </a>
+
+            <!-- Cute Music Toggle Button -->
+            <button id="audio-btn" onclick="toggleAudio()" class="px-5 py-2.5 rounded-full cute-glass hover:bg-white text-xs font-fredoka font-semibold text-cute-pinkDark flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 shadow-md border-2 border-cute-pink/30">
+                <i id="audio-icon" class="fa-solid fa-music text-cute-pink text-sm"></i>
+                <span id="audio-text">Music: Off 🎵</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Museum Header Section -->
+    <section class="relative z-10 pt-10 pb-8 px-4 sm:px-6 lg:px-8 text-center max-w-4xl mx-auto">
+        <!-- Cute Creator Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full cute-badge text-cute-pinkDark text-xs font-fredoka font-bold tracking-wider uppercase mb-6 shadow-sm animate-float">
+            <i class="fa-solid fa-wand-magic-sparkles text-cute-pink"></i>
+            <span>created by Jan Jiril</span>
+            <i class="fa-solid fa-sparkles text-cute-purple"></i>
+        </div>
+
+        <!-- Main Title -->
+        <h1 class="font-fredoka text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cute-pinkDark via-cute-purple to-cute-pink mb-4 leading-tight drop-shadow-sm">
+            Ellailie's museum 🎀
+        </h1>
+
+        <!-- Romantic Filipino Poem Quote -->
+        <div class="cute-glass rounded-3xl p-6 sm:p-8 max-w-3xl mx-auto border-2 border-cute-pinkLight shadow-xl my-6 relative overflow-hidden">
+            <div class="absolute -top-3 left-6 text-2xl text-cute-pink opacity-80">🌸</div>
+            <div class="absolute -bottom-3 right-6 text-2xl text-cute-purple opacity-80">✨</div>
+            
+            <p class="font-script text-2xl sm:text-3xl md:text-4xl text-cute-pinkDark leading-relaxed">
+                &ldquo;Pagpupugay sa di-matingkalang ganda at maningning na kaluluwa ng isang walang-katulad na paraluman.&rdquo;
+            </p>
+        </div>
+
+        <div class="flex items-center justify-center gap-2 mt-6">
+            <span class="w-12 h-1 rounded-full bg-cute-pink/40"></span>
+            <i class="fa-solid fa-heart text-cute-pink text-sm"></i>
+            <span class="w-12 h-1 rounded-full bg-cute-purple/40"></span>
+        </div>
+    </section>
+
+    <!-- Main Exhibition Gallery Section -->
+    <main class="relative z-10 py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex-grow w-full">
+        
+        <!-- Gallery Section Heading -->
+        <div class="text-center mb-10">
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-gray-800 tracking-wide flex items-center justify-center gap-3">
+                <span class="text-cute-pink">✨</span>
+                <span>The aMUSEment starts</span>
+                <span class="text-cute-purple">✨</span>
+            </h2>
+            <p class="font-sans text-xs sm:text-sm text-cute-pinkDark/70 font-medium mt-1">Tap or click any exhibit frame to enlarge!</p>
+        </div>
+
+        <!-- Dynamic Photo Grid Container -->
+        <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+            <!-- Gallery cards rendered dynamically via JS -->
+        </div>
+    </main>
+
+    <!-- Interactive Lightbox Modal -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 bg-cute-purpleDark/40 backdrop-blur-md hidden flex items-center justify-center p-4 transition-all duration-300">
+        
+        <!-- Backdrop Click to Close -->
+        <div onclick="closeLightbox()" class="absolute inset-0 cursor-pointer"></div>
+
+        <!-- Modal Card Container -->
+        <div class="relative z-10 max-w-4xl w-full max-h-[90vh] bg-white rounded-3xl border-4 border-cute-pinkLight overflow-hidden flex flex-col md:flex-row shadow-2xl">
+            
+            <!-- Close Button -->
+            <button onclick="closeLightbox()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-cute-pinkLight text-cute-pinkDark hover:bg-cute-pink hover:text-white flex items-center justify-center transition-all shadow-md font-bold">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Image Container -->
+            <div class="md:w-3/5 bg-cute-bg flex items-center justify-center relative p-6 min-h-[320px] md:min-h-[500px]">
+                <img id="modal-image" src="" alt="Museum Exhibit" class="max-h-[70vh] w-auto object-contain rounded-2xl border-4 border-white shadow-xl">
+                
+                <!-- Navigation Arrows -->
+                <button onclick="navigateLightbox(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 text-cute-pinkDark hover:bg-cute-pink hover:text-white flex items-center justify-center transition-all shadow-md border-2 border-cute-pinkLight">
+                    <i class="fa-solid fa-chevron-left text-base"></i>
+                </button>
+                <button onclick="navigateLightbox(1)" class="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 text-cute-pinkDark hover:bg-cute-pink hover:text-white flex items-center justify-center transition-all shadow-md border-2 border-cute-pinkLight">
+                    <i class="fa-solid fa-chevron-right text-base"></i>
+                </button>
+            </div>
+
+            <!-- Modal Sidebar Details -->
+            <div class="md:w-2/5 p-6 sm:p-8 flex flex-col justify-between bg-white">
+                <div>
+                    <!-- Exhibit Badge -->
+                    <div class="mb-4">
+                        <span id="modal-exhibit-id" class="text-xs font-fredoka font-semibold text-cute-pinkDark uppercase tracking-wider px-3 py-1.5 rounded-full bg-cute-pinkLight border border-cute-pink/30 inline-block">
+                            Exhibit #01 💖
+                        </span>
+                    </div>
+
+                    <!-- Photo Title -->
+                    <h3 id="modal-title" class="font-fredoka text-2xl sm:text-3xl font-bold text-gray-800 mb-3 leading-snug">
+                        Sweet Memory
+                    </h3>
+
+                    <!-- Date Tag -->
+                    <div class="flex items-center gap-2 text-sm text-cute-purpleDark font-sans border-b border-cute-pinkLight pb-4">
+                        <i class="fa-regular fa-calendar-heart text-cute-pink"></i>
+                        <span id="modal-date" class="font-semibold">Date</span>
+                    </div>
+                </div>
+
+                <!-- Modal Like Action Button -->
+                <div class="pt-6 border-t border-cute-pinkLight flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] text-gray-400 uppercase tracking-widest font-fredoka block">Museum Record</span>
+                        <span class="text-xs text-cute-purple font-fredoka font-bold">Permanent Collection ✨</span>
+                    </div>
+
+                    <button id="modal-like-btn" onclick="toggleModalLike()" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-cute-pink to-cute-purple text-white hover:opacity-95 transition-all flex items-center gap-2 text-xs font-fredoka font-bold shadow-md active:scale-95">
+                        <i class="fa-solid fa-heart text-sm text-white"></i>
+                        <span id="modal-likes-count">0</span> Likes
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t-2 border-cute-pinkLight bg-white/70 backdrop-blur-md py-8 px-4 text-center mt-12">
+        <div class="max-w-4xl mx-auto space-y-2">
+            <div class="flex items-center justify-center gap-2 text-cute-pinkDark">
+                <i class="fa-solid fa-sparkles text-cute-purple"></i>
+                <span class="font-fredoka text-base tracking-wide font-bold">Jan Jiril's museum</span>
+                <i class="fa-solid fa-sparkles text-cute-pink"></i>
+            </div>
+            
+            <p class="text-xs text-cute-pinkDark/80 font-fredoka font-medium">
+                creator, Jan Jiril &bull; Permanent Collection 🎀
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        /* ==========================================================================
+           1. MUSIC CONFIGURATION
+           ========================================================================== */
+        const CUSTOM_MUSIC_URL = ""; 
+
+        /* ==========================================================================
+           2. PRESERVED EXHIBIT DATASET (SYNTAX ERROR FIXED & CLEANED)
+           ========================================================================== */
+        const EXHIBITS_DATA = [
+            {
+                id: 1,
+                title: "Sweet Smile",
+                date: "October 14, 2024",
+                imageUrl: "photo_2026-08-31_18-12-09.jpg",
+                likes: 142
+            },
+            {
+                id: 2,
+                title: "Radiant Moment",
+                date: "August",
+                imageUrl: "photo_2025-12-29_01-00-38.jpg",
+                likes: 98
+            },
+            {
+                id: 3,
+                title: "Gentle Glow",
+                date: "August",
+                imageUrl: "photo_2025-12-29_00-39-13.jpg",
+                likes: 215
+            },
+            {
+                id: 4,
+                title: "Lovely Eyes",
+                date: "August",
+                imageUrl: "photo_2025-12-29_00-33-30.jpg",
+                likes: 184
+            },
+            {
+                id: 5,
+                title: "Warm Happiness",
+                date: "August",
+                imageUrl: "photo_2025-12-29_00-33-29 (2).jpg",
+                likes: 112
+            },
+            {
+                id: 6,
+                title: "Soft Sunshine",
+                date: "August",
+                imageUrl: "photo_2025-12-29_00-33-29.jpg",
+                likes: 167
+            },
+            {
+                id: 7,
+                title: "Precious Memory",
+                date: "August",
+                imageUrl: "photo_2025-12-29_00-33-28 (2).jpg",
+                likes: 184
+            },
+            {
+                id: 8,
+                title: "Charming Pose",
+                date: "August",
+                imageUrl: "photo_2025-12-29_00-33-28.jpg",
+                likes: 184
+            },
+            {
+                id: 9,
+                title: "Angel's Touch",
+                date: "August",
+                imageUrl: "photo_2025-12-29_00-33-26 (2).jpg",
+                likes: 184
+            },
+            {
+                id: 10,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-33-26.jpg",
+                likes: 184
+            },
+            {
+                id: 11,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-33-25.jpg",
+                likes: 184
+            },
+            {
+                id: 12,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-33-24 (2).jpg",
+                likes: 184
+            },
+            {
+                id: 13,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-33-24.jpg",
+                likes: 184
+            },
+            {
+                id: 14,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-33-23.jpg",
+                likes: 184
+            },
+            {
+                id: 15,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-33-21.jpg",
+                likes: 184
+            },
+            {
+                id: 16,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-32-44.jpg",
+                likes: 184
+            },
+            {
+                id: 17,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-32-43 (2).jpg",
+                likes: 184
+            },
+            {
+                id: 18,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-32-43.jpg",
+                likes: 184
+            },
+            {
+                id: 19,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-32-41.jpg",
+                likes: 184
+            },
+            {
+                id: 20,
+                title: "Quiet Elegance",
+                date: "Cozy Evening",
+                imageUrl: "photo_2025-12-29_00-32-40.jpg",
+                likes: 184
+            }
+        ];
+
+        let activeExhibitIndex = 0;
+
+   
+        function renderGallery() {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+
+            EXHIBITS_DATA.forEach((exhibit) => {
+                const card = document.createElement('div');
+                card.className = "cute-card flex flex-col group cursor-pointer transition-all duration-300";
+                
+                const displayTitle = exhibit.title.trim() !== "" ? exhibit.title : `Exhibit N° ${exhibit.id}`;
+
+                card.innerHTML = `
+                    <!-- Cute Frame Card Box -->
+                    <div class="cute-card-frame rounded-3xl p-3 bg-white overflow-hidden relative mb-3" onclick="openLightbox(${exhibit.id})">
+                        <div class="aspect-[3/4] overflow-hidden relative rounded-2xl bg-cute-pinkLight/50">
+                            <img src="${exhibit.imageUrl}" alt="${displayTitle}" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                 onerror="this.src='https://placehold.co/600x800/fce7f3/9333ea?text=Ellailie%27s+Photo'">
+                            
+                            <!-- Hover Overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-cute-purpleDark/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                                <span class="text-xs font-fredoka text-white tracking-wider flex items-center gap-2 font-semibold">
+                                    <i class="fa-solid fa-heart text-cute-pink"></i> View Artwork
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Cute Plaque Ribbon Below Frame -->
+                        <div class="mt-3 px-2 text-center">
+                            <span class="text-[10px] font-fredoka tracking-widest uppercase block text-cute-pinkDark font-bold mb-0.5">
+                                EXHIBIT N° 0${exhibit.id}
+                            </span>
+                            <h3 class="font-fredoka font-bold text-base text-gray-800 truncate">${displayTitle}</h3>
+                            
+                            <div class="flex items-center justify-between text-xs text-cute-purpleDark font-fredoka font-medium border-t border-cute-pinkLight mt-2 pt-2">
+                                <span class="flex items-center gap-1 text-[11px]">
+                                    <i class="fa-regular fa-calendar opacity-75 text-cute-pink"></i> ${exhibit.date}
+                                </span>
+                                <button onclick="event.stopPropagation(); likeCard(${exhibit.id}, this)" class="hover:scale-110 active:scale-90 transition-transform flex items-center gap-1.5 font-bold bg-cute-pinkLight px-3 py-1 rounded-full text-cute-pinkDark">
+                                    <i class="fa-solid fa-heart text-cute-pink"></i>
+                                    <span class="like-count">${exhibit.likes}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        /* ==========================================================================
+           4. INTERACTIVE LIGHTBOX LOGIC
+           ========================================================================== */
+        function openLightbox(id) {
+            const index = EXHIBITS_DATA.findIndex(item => item.id === id);
+            if (index === -1) return;
+            activeExhibitIndex = index;
+            
+            updateLightboxContent();
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function navigateLightbox(direction) {
+            activeExhibitIndex = (activeExhibitIndex + direction + EXHIBITS_DATA.length) % EXHIBITS_DATA.length;
+            updateLightboxContent();
+        }
+
+        function updateLightboxContent() {
+            const exhibit = EXHIBITS_DATA[activeExhibitIndex];
+            const displayTitle = exhibit.title.trim() !== "" ? exhibit.title : `Exhibit N° ${exhibit.id}`;
+            
+            const imgEl = document.getElementById('modal-image');
+            imgEl.src = exhibit.imageUrl;
+            imgEl.onerror = function() {
+                this.src = 'https://placehold.co/600x800/fce7f3/9333ea?text=Ellailie%27s+Photo';
+            };
+
+            document.getElementById('modal-exhibit-id').innerText = `EXHIBIT N° 0${exhibit.id} 💖`;
+            document.getElementById('modal-title').innerText = displayTitle;
+            document.getElementById('modal-date').innerText = exhibit.date;
+            document.getElementById('modal-likes-count').innerText = exhibit.likes;
+        }
+
+        function toggleModalLike() {
+            EXHIBITS_DATA[activeExhibitIndex].likes += 1;
+            document.getElementById('modal-likes-count').innerText = EXHIBITS_DATA[activeExhibitIndex].likes;
+            
+            const btnIcon = document.querySelector('#modal-like-btn i');
+            if (btnIcon) {
+                btnIcon.classList.add('heart-pop');
+                setTimeout(() => btnIcon.classList.remove('heart-pop'), 300);
+            }
+            renderGallery();
+        }
+
+        function likeCard(id, buttonEl) {
+            const exhibit = EXHIBITS_DATA.find(item => item.id === id);
+            if (exhibit) {
+                exhibit.likes += 1;
+                const countSpan = buttonEl.querySelector('.like-count');
+                if (countSpan) countSpan.innerText = exhibit.likes;
+                const heartIcon = buttonEl.querySelector('i');
+                if (heartIcon) {
+                    heartIcon.classList.add('heart-pop');
+                    setTimeout(() => heartIcon.classList.remove('heart-pop'), 300);
+                }
+            }
+        }
+
+        /* ==========================================================================
+           5. CANVAS PARTICLES (FLOATING PINK HEARTS & SPARKLES)
+           ========================================================================== */
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class CuteParticle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 80;
+                this.size = Math.random() * 14 + 8;
+                this.speedY = Math.random() * 0.8 + 0.3;
+                this.speedX = Math.sin(Math.random() * Math.PI) * 0.4;
+                this.opacity = Math.random() * 0.5 + 0.3;
+                
+                const types = ['heart', 'sparkle', 'bubble'];
+                this.type = types[Math.floor(Math.random() * types.length)];
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += Math.sin(this.y * 0.02) * 0.5;
+                if (this.y < -30) this.reset();
+            }
+
+            draw() {
+                ctx.globalAlpha = this.opacity;
+                if (this.type === 'heart') {
+                    ctx.fillStyle = '#f472b6';
+                    ctx.font = `${this.size}px serif`;
+                    ctx.fillText('♥', this.x, this.y);
+                } else if (this.type === 'sparkle') {
+                    ctx.fillStyle = '#c084fc';
+                    ctx.font = `${this.size * 0.8}px serif`;
+                    ctx.fillText('✨', this.x, this.y);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size / 3, 0, Math.PI * 2);
+                    ctx.fillStyle = '#fce7f3';
+                    ctx.fill();
+                    ctx.strokeStyle = '#f472b6';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 45; i++) {
+                particles.push(new CuteParticle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        /* ==========================================================================
+           6. MUSIC PLAYER & SYNTHESIZER FALLBACK
+           ========================================================================== */
+        let audioCtx = null;
+        let isAudioPlaying = false;
+        let synthOscs = [], synthGain = null;
+
+        function toggleAudio() {
+            const btnText = document.getElementById('audio-text');
+            const btnIcon = document.getElementById('audio-icon');
+            const audioElement = document.getElementById('museum-audio');
+
+            if (CUSTOM_MUSIC_URL.trim() !== "" || (audioElement && audioElement.getAttribute('src') !== "")) {
+                if (CUSTOM_MUSIC_URL.trim() !== "" && audioElement.src !== CUSTOM_MUSIC_URL) {
+                    audioElement.src = CUSTOM_MUSIC_URL;
+                }
+
+                if (!isAudioPlaying) {
+                    audioElement.play().then(() => {
+                        isAudioPlaying = true;
+                        btnText.innerText = "Music: Playing 🎵";
+                        btnIcon.className = "fa-solid fa-volume-high text-cute-pink animate-pulse";
+                    }).catch(err => {
+                        console.warn("Audio file fallback trigger due to auto-play or path missing:", err);
+                        playCuteSynth();
+                    });
+                } else {
+                    audioElement.pause();
+                    isAudioPlaying = false;
+                    btnText.innerText = "Music: Off 🎵";
+                    btnIcon.className = "fa-solid fa-music text-cute-pink";
+                }
+                return;
+            }
+
+            playCuteSynth();
+        }
+
+        function playCuteSynth() {
+            const btnText = document.getElementById('audio-text');
+            const btnIcon = document.getElementById('audio-icon');
+
+            if (!isAudioPlaying) {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                synthGain = audioCtx.createGain();
+                synthGain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                synthGain.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + 1.5);
+
+                const freqs = [261.63, 329.63, 392.00, 523.25]; // C major chord frequencies
+                synthOscs = freqs.map(f => {
+                    const osc = audioCtx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+                    osc.connect(synthGain);
+                    osc.start();
+                    return osc;
+                });
+
+                synthGain.connect(audioCtx.destination);
+                isAudioPlaying = true;
+                btnText.innerText = "Music: Playing 🎵";
+                btnIcon.className = "fa-solid fa-volume-high text-cute-pink animate-pulse";
+            } else {
+                if (synthGain) {
+                    synthGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+                    setTimeout(() => {
+                        synthOscs.forEach(o => o.stop());
+                    }, 1000);
+                }
+                isAudioPlaying = false;
+                btnText.innerText = "Music: Off 🎵";
+                btnIcon.className = "fa-solid fa-music text-cute-pink";
+            }
+        }
+
+        /* ==========================================================================
+           7. KEYBOARD SHORTCUTS
+           ========================================================================== */
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('lightbox-modal');
+            if (!modal.classList.contains('hidden')) {
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') navigateLightbox(-1);
+                if (e.key === 'ArrowRight') navigateLightbox(1);
+            }
+        });
+
+        /* ==========================================================================
+           8. INITIALIZATION ON WINDOW LOAD
+           ========================================================================== */
+        window.onload = function() {
+            renderGallery();
+            initParticles();
+            animateParticles();
+        };
+    </script>
+</body>
+</html>
